@@ -1,0 +1,15 @@
+#summary Use the command-line tool to animate a flash file with java.
+
+silenus-java.jar is a standalone java executable that allows you to export an .FLA file or XFL directory to JSON, or render the animation to the screen using Java Graphics.
+
+To render a FLA file of your choice on screen, call:
+`java -jar silenus-java.jar "/path/to/file.fla"`
+
+To render an XFL directory of your choice on screen, call:
+`java -jar silenus-java.jar "/path/to/dir"`
+
+To export a FLA file of your choice to file, call:
+`java -jar silenus-java.jar "/path/to/file.fla" "/path/to/output.json"`
+
+To export an XFL directory of your choice to file, call:
+`java -jar silenus-java.jar "/path/to/dir" "/path/to/output.json"`

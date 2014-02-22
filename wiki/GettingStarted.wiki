@@ -1,0 +1,26 @@
+#summary Getting started with Silenus.
+
+= Introduction =
+
+First, you need determine what you want to use Silenus for, in order to know which release you should download.
+
+== Use Silenus as a java library in your project =
+
+If you want to include Silenus in your java project to be able to render flash animations, you should download silenus.jar and add it to your build path. Then you should follow the instructions on [GetingStartedJar this page] to use Silenus.
+
+
+
+== Use Silenus to render .FLA files without flash player ==
+
+If you want to see what Silenus can do, you should download silenus.zip and look at the directory java-renderer. This file includes a small sample .FLA file that you can test, and will render any .FLA file (from CS5) that you give it at the command line. Follow the instructions on [GettingStartedStandalone this page] to run the program.
+
+
+
+== Use Silenus to export animation data ==
+
+The stand-alone executable in silenus.zip (directory java-renderer) will also export the animation to JSON, if you provide a second command-line argument. This data can then be used in any environment that can read JSON data. See [GettingStartedStandalone this page] for more information on how to export the JSON data.
+
+
+== Render Silenus JSON output in the browser ==
+
+Silenus ships with a javascript renderer that will take the JSON output and render them on a canvas (directory javascript-renderer in silenus.zip). The code is well-documented and mostly self-explanatory, and should be used as a starting point to integrate Silenus in your own project. More information can be found [GettingStartedRenderer here].

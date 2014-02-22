@@ -1,0 +1,93 @@
+#summary Instructions for using Silenus in your own project.
+
+= Installation =
+
+Download silenus.jar and add it to your build path. It has no external dependencies. You can look at the [http://code.google.com/p/silenus/source/browse/#svn%2Ftrunk%2Fsilenus-java silenus-java source code] to get a general idea of how to use Silenus. Continue reading for detailed instructions.
+
+
+= Use =
+
+The following code will load an .FLA file and and render it on screen in java:
+
+{{{
+
+// parse and set up XFL
+XFLDocument xfl = new XFLDocument();
+xfl.parseXFL(directoryName);
+JPanel renderer = new RawJavaRenderer(xfl);
+
+// render in JFrame
+JFrame frame = new JFrame("Silenus demo");
+frame.setBackground(Color.white);
+content.setBackground(Color.white);
+frame.setSize(xfl.getWidth(), xfl.getHeight() + 50); // 50 for header
+frame.setContentPane(content);
+frame.addWindowListener(new WindowAdapter() {
+  @Override
+  public void windowClosing(WindowEvent event) {
+    System.exit(0);
+  }
+});
+frame.setVisible(true);
+}}}
+
+the XFLDocument class is the enry point to the framework. The following steps explain in more detail how to use Silenus:
+
+ # Create an `XFLDocument` object.
+ # (optional) Assign an alternative `XMLUtility` for parsing XML files - can be used to override the default XML parser from javax.xml that is used.
+ # (optional) Assign an alternative `StreamFactory`. This can be used to change the way `XFLDocument` stores the files expanded from the FLA file, and how the converted PNG's are saved. By default, `XFLDocument` will create all the files in the directory where the FLA can be found. See the section below for expanding in memory.
+ # Call `XFLDocument.parseXFL('/path/to/file.fla')` to unzip file.fla, convert the binary images to png and store everything in the /path/to directory. Call `XFLDOcument.parseXFL('/path/to/xfl/dir')` to read the uncompressed XFL directory (if the .fla was unzipped by the user before, or if the flash document was saved with the 'save as uncompressed XFL' option).
+ # `XFLDocument` now contains everything you need to reproduce the animation. You can walk through the data yourself with the getters, or use `SceneRenderer` coupled with a `RenderInterface` of your choosing to render one of the scenes in your document to screen. This is done by first implementing `RenderInterface`, or by using two of the provided implementations (`JavaRenderer`, which uses the java.awt.Graphics package, or `RawDataRenderer`, which outputs serialiable and exportable data for the entire animation). You pass a `Timeline` (internal flash terminology for scene) object and a `RenderInterface` to the constructor of `SceneRenderer`, and `SceneRenderer` will then render a frame by calling `render(frameNumber)`.
+
+
+This is all there is to animating a flash file using Silenus.
+
+= Use Silenus as an export tool =
+
+By using the `RawDataRenderer`, you can acquire an `AnimationData` object, which has a `getJSON()` function that can be called to get a full JSON representation of all the frames in the animation, and all the bitmap used within.
+
+The following code example will do this:
+
+{{{
+XFLDocument doc = new XFLDocument();
+doc.parseXFL("file.fla");
+RawDataRenderer renderer = new RawDataRenderer(doc.getScene(), doc.getWidth(), doc.getHeight(), doc.getFrameRate()); // renders the entire animation once in the constructor
+String json = renderer.getAnimationData().getJSON();
+}}}
+
+
+= Use Silenus without writing to the file system =
+
+Silenus, by default, writes out a lot of files to the file system because it needs to unzip the FLA file and then convert all the png's from the binary flash format. Sometimes you do not have access to a file system, or you do not want to pollute the file systems with a lot of files you won't need later (for example, [GettingStartedExport when using the web service]).
+
+Silenus provides a means to redirect the file writing by implementing the `StreamFactory` interface. Silenus ships with two versions: the `DefaultStreamFactory`, which saves to disk, and the `MemoryStreamFactory`, which stores all files in memory.
+
+Note that png files are also stored in memory only, and therefore the animation can't be rendered directly when using this method, unless the rendering engine also obtains the png data from the same stream factory. Also note that, in order to work with the `MemoryStreamFactory`, the fla file must first be copied to this virtual file system.
+
+The following code demonstrates loading and parsing an FLA in memory only and fetching the JSON data for the animation:
+
+{{{
+
+// set up stream factory
+StreamFactory streamFactory = new MemoryStreamFactory();
+
+// copy the data from file.fla on disk to the virtual file system
+// this data can come from any source, including uploaded data, for example (see web service)
+OutputStream out = streamFactory.createOutputStream("file.fla");
+InputStream in = new FileInputStream("file.fla");
+int BufferSize = 1024;
+byte[] buffer = new byte[BufferSize];
+int count;
+while ((count = in.read(buffer, 0, BufferSize)) != -1) {
+    out.write(buffer, 0, BufferSize);
+}
+
+// create an XFLDocument and link it with the stream factory
+XFLDocument doc = new XFLDocument();
+doc.setStreamFactory(streamFactory);
+
+// unzip and parse the file in memory and obtain the json data
+doc.parseXFL("file.fla");
+RawDataRenderer renderer = new RawDataRenderer(doc.getScene(), doc.getWidth(), doc.getHeight(), doc.getFrameRate()); // renders the entire animation once in the constructor
+String json = renderer.getAnimationData().getJSON();
+}}}

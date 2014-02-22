@@ -1,0 +1,56 @@
+<!--
+Copyright (c) 2012 Karel Crombecq, Sileni Studios
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Silenus website: http://code.google.com/p/silenus/
+Sileni Studios: http://www.silenistudios.com
+-->
+
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		
+		<!--  no caching!! -->
+		<meta http-equiv=”Pragma” content=”no-cache”>
+		<meta http-equiv=”Expires” content=”-1″>
+		<meta http-equiv=”CACHE-CONTROL” content=”NO-CACHE”>
+		
+		<title>Silenus Flash Exporter & Renderer</title>
+		
+		<link rel="stylesheet" type="text/css" href="silenus.css" />
+		
+		<script data-main="scripts/main" src="scripts/require.js"></script>
+		<script type="text/javascript">
+			require.config({
+				baseUrl: "scripts",
+				paths: {
+				"upload": "../upload"
+				}
+			});
+		</script>
+	</head>
+	
+	<body>
+		
+		<p><a href="http://code.google.com/p/silenus" target="_blank"><img src="Silenus.jpg"/></a></p>
+		
+		
+		<p><a href="http://code.google.com/p/silenus" target="_blank">Silenus</a> is an <b>open source</b> java library developed by <a href="http://www.silenistudios.com">Sileni Studios</a> that parses and interprets an Adobe Flash .FLA file. It can export this data in a clean, efficient JSON format ready for use in your browser. Silenus comes as a standalone library, which you can integrate in your java application, or as a stand-alone JAR file that will read your .FLA file and save the JSON data to disk. Silenus also comes with a javascript-based renderer, which will take the JSON data and render them to a canvas element.</p>
+		
+		<p>The animation below was directly exported from a .FLA file and is rendered live using the javascript renderer. It consists of 24 body parts in a complex tree hierarchy, and is a sample from <a href="http://TODO" target="_blank">Castle Quest</a>, the game currently under development by Sileni Studios. Silenus was developed to form a bridge between artists working in Flash, and programmers writing their game with HTML5 technologies.</p>
+		
+		<p>Below the animation you can find a flow-chart describing the Silenus approach. For a full list of features and documentation, please refer to the <a href="http://code.google.com/p/silenus" target="_blank">Google code project</a>.</p>
+		
+		<div id="animation"></div>
+		
+		<p><img src="flowchart-small.png"/></p>
+		
+		<p><b>&copy; <a href="mailto:Karel@silenistudios.com">Karel Crombecq</a>, <a href="http://www.silenistudios.com" target="_blank">Sileni Studios</a></p>
+		
+	</body>
+</html>

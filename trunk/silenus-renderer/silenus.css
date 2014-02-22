@@ -1,0 +1,28 @@
+
+body {
+	background-color: #513122;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	color: white;
+	text-align: center;
+}
+
+a {
+	text-decoration: none;
+	color: #C2AA6D;
+}
+
+a:visited {
+	text-decoration: none;
+	color: #C2AA6D;
+}
+
+a:hover {
+		text-decoration: underline;
+	color: white;
+}
+
+p {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+}

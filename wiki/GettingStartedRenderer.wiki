@@ -1,0 +1,20 @@
+#summary Documentation for the Javascript renderer of Silenus.
+
+= Introduction =
+
+Silenus 0.3 ships with a javascript renderer that will take the JSON output and render them on a canvas. The code is well-documented and mostly self-explanatory, and should be used as a starting point to integrate Silenus in your own project.
+
+This implementation does depend on two libraries: [http://requirejs.org/ require.js] and [https://github.com/kriszyp/compose compose.js], but the renderer logic (contained in renderer.js) is self-containing and can easily be used separately.
+
+Renderer.js will take a JSON as input, and will output a canvas element of the right dimensions on which the animation can be drawn. It currently supports all flash features also supported by Silenus, except for some line features (hairline, dashed, ...), since they're not directly supported by the Canvas API. In future releases, these features might be emulated.
+
+For efficiency reasons, the renderer will draw all shapes only once to hidden canvases during initialization, and copy those canvases in the right position and orientation on the screen during the animation.
+
+There is one exception in which this does not happen. The Canvas API does not copy clipping regions when copying canvases onto each other, so masks are always rendered in real-time during the animation. Using lots of masks can therefore cause a slowdown.
+
+
+= Some remarks on file size =
+
+The renderer as it is now is extremely fast. It will render complex animations with ease. However, the JSON format does not lend itself perfectly to very complex animations. Since it's text-based, there is a massive overhead in storing coordinates and object hierarchies.
+
+In a production environment, it should be considered to convert the json.instances part of the json to a more compact data format, such as a flat array of numbers, which can then be stored for later use. Changing the renderer to work with this data is quite simple.
