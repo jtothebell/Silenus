@@ -3,7 +3,6 @@ package com.silenistudios.silenus.dom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -33,9 +32,6 @@ public class PathGenerator {
 	// list of completed stroke paths
 	Vector<Path> fStrokePaths = new Vector<Path>();
 	
-	// open paths - paths that still have to be closed
-	List<Path> fOpenPaths = new LinkedList<Path>();
-	
 	// constructor
 	public PathGenerator() {
 	}
@@ -53,7 +49,7 @@ public class PathGenerator {
 		for (Node edge : edges) {
 			
 			// get points of this edge
-			Vector<Line> lines = null;
+			Vector<Line> lines;
 			try {
 				lines = getLines(XMLUtility, edge);
 			}
@@ -64,44 +60,50 @@ public class PathGenerator {
 			}
 			
 			// cubics or other editor-only lines
-			if (lines == null)	continue;
+			if (lines == null)	{
+                continue;
+            }
 			
 			// walk over all lines in this edge and sort them by color and start point
-			for (int i = 0; i < lines.size(); ++i) {
-				
-				// get the different types
-				// IMPORTANT
-				// IMPORTANT note that we subtract 1 here - the indices are counted starting from 1, while we store fill and stroke styles starting from 0 in an array
-				// IMPORTANT
-				fillTypes[0] = XMLUtility.getIntAttribute(edge, "fillStyle0", 0) - 1;
-				fillTypes[1] = XMLUtility.getIntAttribute(edge, "fillStyle1", 0) - 1;
-				int strokeType = XMLUtility.getIntAttribute(edge, "strokeStyle", 0) - 1; // -1 is "invalid"
-				
-				// we simply add the stroke paths
-				if (strokeType != -1) {
-					Path path = new Path(strokeType);
-					path.add(lines.get(i));
-					fStrokePaths.add(path);
-				}
-				
-				// we consider all open paths
-				for (int fillType = 0; fillType < 2; ++fillType) {
-					
-					// no no fill type set
-					if (fillTypes[fillType] == -1) continue;
-					
-					// create the path - inverted if it's a fillType1
-					Line line = lines.get(i);
-					if (fillType == 1) line = line.invert();
-					
-					// add to the list of paths
-					String hash = getPointHash(line.getStart());
-					if (!pathsByColor.containsKey(fillTypes[fillType])) pathsByColor.put(fillTypes[fillType], new HashMap<String, List<Line>>());
-					Map<String, List<Line>> paths = pathsByColor.get(fillTypes[fillType]);
-					if (!paths.containsKey(hash)) paths.put(hash, new ArrayList<Line>());
-					paths.get(hash).add(line);
-				}
-			}
+            for (Line line1 : lines) {
+
+                // get the different types
+                // IMPORTANT
+                // IMPORTANT note that we subtract 1 here - the indices are counted starting from 1, while we store fill and stroke styles starting from 0 in an array
+                // IMPORTANT
+                fillTypes[0] = XMLUtility.getIntAttribute(edge, "fillStyle0", 0) - 1; //fillstyle 0 is the left of the edge
+                fillTypes[1] = XMLUtility.getIntAttribute(edge, "fillStyle1", 0) - 1; //fillstyle 1 is ther ight of the edge
+                int strokeType = XMLUtility.getIntAttribute(edge, "strokeStyle", 0) - 1; // -1 is "invalid"
+
+                // we simply add the stroke paths
+                if (strokeType != -1) {
+                    Path path = new Path(strokeType);
+                    path.add(line1);
+                    fStrokePaths.add(path);
+                }
+
+                // we consider all open paths
+                for (int fillType = 0; fillType < 2; ++fillType) {
+
+                    // no no fill type set
+                    if (fillTypes[fillType] == -1) continue;
+
+                    // create the path - inverted if it's a fillType1
+                    Line line = line1;
+                    if (fillType == 1) line = line.invert();
+
+                    // add to the list of paths
+                    String hash = getPointHash(line.getStart());
+                    if (!pathsByColor.containsKey(fillTypes[fillType])) {
+                        pathsByColor.put(fillTypes[fillType], new HashMap<String, List<Line>>());
+                    }
+                    Map<String, List<Line>> paths = pathsByColor.get(fillTypes[fillType]);
+                    if (!paths.containsKey(hash)) {
+                        paths.put(hash, new ArrayList<Line>());
+                    }
+                    paths.get(hash).add(line);
+                }
+            }
 		}
 		
 		// now we walk over all paths with the same color and try to merge them
@@ -122,7 +124,9 @@ public class PathGenerator {
 				paths.remove(0);
 				
 				// this list is now empty - delete it from the map
-				if (paths.size() == 0) hash.remove(getPointHash(firstLine.getStart()));
+				if (paths.size() == 0) {
+                    hash.remove(getPointHash(firstLine.getStart()));
+                }
 				
 				// compute the hash for the endpoint
 				String endHash = getPointHash(firstLine.getStop());
@@ -131,7 +135,9 @@ public class PathGenerator {
 				List<Line> connections = hash.get(endHash);
 				
 				// invalid connection - might be unknown edge type
-				if (connections == null) continue;
+				if (connections == null) {
+                    continue;
+                }
 				
 				// keep going until we can't find any connections anymore
 				Line connection = firstLine;
@@ -165,13 +171,11 @@ public class PathGenerator {
 					//while (it.hasPrevious() && !it.previous().equals(connectionInverted));
 					while (it.hasPrevious()) {
 						Line p = it.previous();
-						if (!p.equals(connectionInverted)) {
-						}
-						else {
-							if (!alreadyInverse) it.remove();
-							break;
-						}
-					}
+                        if (p.equals(connectionInverted)) {
+                            if (!alreadyInverse) it.remove();
+                            break;
+                        }
+                    }
 					
 					// there is a previous path - this is the one!
 					if (it.hasPrevious()) {
@@ -206,7 +210,9 @@ public class PathGenerator {
 					connections = hash.get(endHash);
 					
 					// invalid connection - might be unknown edge type
-					if (connections == null) break;
+					if (connections == null){
+                        break;
+                    }
 				}
 			}
 		}
@@ -217,20 +223,15 @@ public class PathGenerator {
 	private static String getPointHash(Point p) {
 		return p.getTwipX() + "_" + p.getTwipY();
 	}
-	
 
-	// the pattern for parsing set of path instructions
-	// TODO what does the "[" that sometimes occurs instead of "|" mean?
-	// TODO sometimes letters come behind the numbers, such as "!895 -3557S1|134 -3366!134 -3366|135 -2925". What does it mean?
-	// TODO another weird construct appearing in the edges list: "!10214.5 2608.5[#27EC.6F #A5D.06 10226.5 2697.5"
-	private static Pattern LinePattern = Pattern.compile("([-]?[0-9]*[\\.]?[0-9]+)\\s+([-]?[0-9]*[\\.]?[0-9]+)[S]?[0-9]*\\s*[\\|\\[]{1}\\s*([-]?[0-9]*[\\.]?[0-9]+)\\s+([-]?[0-9]*[\\.]?[0-9]+).*");
-	//private static Pattern InstructionPattern = Pattern.compile("[!\\/\\|\\[\\]S][^!\\/\\|\\[\\]S]+");
+
+    //private static Pattern InstructionPattern = Pattern.compile("[!\\/\\|\\[\\]S][^!\\/\\|\\[\\]S]+");
 	private static Pattern InstructionPattern = Pattern.compile("[!\\x7C\\[\\]\\/][^!\\x7C\\[\\]\\/]+");
 	
 	// get all the points in this edge
 	private Vector<Line> getLines(XMLUtility XMLUtility, Node edge) throws ParseException {
 		
-		String edgesString = null;
+		String edgesString;
 		try {
 			edgesString = XMLUtility.getAttribute(edge, "edges");
 		} catch (ParseException e) {
@@ -280,7 +281,9 @@ public class PathGenerator {
 	// parse moveTo
 	private Point parseMoveTo(String s) throws ParseException {
 		Matcher matcher = Point.getRegExpCompiled().matcher(s);
-		if (!matcher.find() || matcher.groupCount() != 2) throw new ParseException("Invalid move to instruction found in DOMShape: \"" + s + "\"");
+		if (!matcher.find() || matcher.groupCount() != 2) {
+            throw new ParseException("Invalid move to instruction found in DOMShape: \"" + s + "\"");
+        }
 		return new Point(matcher.group(1), matcher.group(2));
 	}
 	

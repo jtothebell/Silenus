@@ -11,8 +11,6 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import com.silenistudios.silenus.ParseException;
-import com.silenistudios.silenus.XFLDocument;
 import com.silenistudios.silenus.raw.AnimationData;
 
 /**
@@ -25,9 +23,11 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		
 		// if no argument is provided, we show the default example
-		String directoryName = "D:/cq3/silenus/examples/SheepEating/SheepEating";
-		//String directoryName = "D:/cq3/silenus/examples/bones/bones";
-		if (args.length > 0) directoryName = args[0];
+		String directoryName = "";
+
+		if (args.length > 0){
+            directoryName = args[0];
+        }
 		
 		// parse an XFL document and render it to screen
 		XFLDocument xfl = new XFLDocument();
@@ -63,7 +63,11 @@ public class Main {
 		AnimationData data = raw.getAnimationData();
 		String json = data.getJSON();
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter("D:/www/silenus-renderer/upload/data.json"));
+            String path = "D:/www/silenus-renderer/upload/data.json";
+            if (args.length > 1) {
+                path = args[1];
+            }
+			BufferedWriter writer = new BufferedWriter(new FileWriter(path));
 			writer.write(json);
 			writer.close();
 		}
