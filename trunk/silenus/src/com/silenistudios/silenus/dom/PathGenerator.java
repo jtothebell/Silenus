@@ -90,7 +90,9 @@ public class PathGenerator {
 
                     // create the path - inverted if it's a fillType1
                     Line line = line1;
-                    if (fillType == 1) line = line.invert();
+                    if (fillType == 1) {
+                        line = line.invert();
+                    }
 
                     // add to the list of paths
                     String hash = getPointHash(line.getStart());

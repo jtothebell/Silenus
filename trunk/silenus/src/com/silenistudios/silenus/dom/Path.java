@@ -46,15 +46,15 @@ public class Path {
 	
 	
 	// get number of points
-	public int getNLines() {
-		return fLines.size();
-	}
+	//public int getNLines() {
+	//	return fLines.size();
+	//}
 	
 	
 	// get all points
-	public List<Line> getLines() {
-		return fLines;
-	}
+	//public List<Line> getLines() {
+	//	return fLines;
+	//}
 	
 	
 	// get stroke or fill index
@@ -71,9 +71,8 @@ public class Path {
 	
 	// equals for list
 	public boolean equals(Path path) {
-		if (path == null) return false;
-		return fId == path.fId;
-	}
+        return path != null && fId == path.fId;
+    }
 	
 	
 	// render the path to a renderer - use some magic to take into account the moveTo actions
@@ -87,8 +86,11 @@ public class Path {
 		for (Line line : fLines) {
 			
 			// HOWEVER, if the stop position of the previous line differs from the start position of the current one,
-			// we issue another moveTo command. I have not seen this happen in .fla files yet, but it might.
-			if (!line.getStart().equals(prevStop)) renderer.moveTo(line.getStart().getX(), line.getStart().getY());
+			// we issue another moveTo command. This can happen if there is a cut out in the middle of a shape
+            // the winding order of the hole will be reversed from the outside of the shape
+			if (!line.getStart().equals(prevStop)){
+                renderer.moveTo(line.getStart().getX(), line.getStart().getY());
+            }
 			
 			// render the line
 			line.render(renderer);
@@ -135,10 +137,6 @@ public class Path {
 	
 	// append move to
 	private String getMoveToJSON(Point p) {
-		StringBuilder ss = new StringBuilder();
-		ss.append("{\"type\":\"moveTo\",");
-		ss.append("\"p\":").append(p.getJSON());
-		ss.append("}");
-		return ss.toString();
+        return "{\"type\":\"moveTo\"," + "\"p\":" + p.getJSON() + "}";
 	}
 }
