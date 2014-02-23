@@ -8,6 +8,7 @@ import com.silenistudios.silenus.ParseException;
 import com.silenistudios.silenus.SceneRenderer;
 import com.silenistudios.silenus.ShapeRenderInterface;
 import com.silenistudios.silenus.dom.fillstyles.FillStyle;
+import com.silenistudios.silenus.dom.lines.Line;
 import com.silenistudios.silenus.xml.Node;
 import com.silenistudios.silenus.xml.XMLUtility;
 
@@ -71,9 +72,17 @@ public class ShapeInstance extends Instance {
 		fStrokePaths = pathGenerator.getStrokePaths();
 		fFillPaths = pathGenerator.getFillPaths();
 		// verify all the links with fill/stroke styles
-		for (Path path : fStrokePaths) if (path.getIndex() >= fStrokeStyles.size()) throw new ParseException("Non-existing stroke style refered in path");
-		for (Path path : fFillPaths) if (path.getIndex() >= fFillStyles.size()) throw new ParseException("Non-existing stroke style refered in path");
-		
+		for (Path path : fStrokePaths) {
+            if (path.getIndex() >= fStrokeStyles.size()) {
+                throw new ParseException("Non-existing stroke style refered in path");
+            }
+        }
+		for (Path path : fFillPaths) {
+            if (path.getIndex() >= fFillStyles.size()) {
+                throw new ParseException("Non-existing stroke style refered in path");
+            }
+        }
+		combineFillPathsOfSameStyle();
 		// generate a unique id
 		fId = IdCounter++;
 		
@@ -81,13 +90,25 @@ public class ShapeInstance extends Instance {
 		setLibraryItemName("########SHAPE#########+++" + fId + "+++");
 		
 	}
-	
-	
-	// get id
-	public long getId() {
-		return fId;
-	}
-	
+
+    private void combineFillPathsOfSameStyle() {
+        Vector<Path> pathsToRemove = new Vector<Path>();
+        for (Path path1 : fFillPaths) {
+            for(Path path2 : fFillPaths) {
+                if (path1 != path2 && path1.getIndex() == path2.getIndex() &&
+                        !pathsToRemove.contains(path1) && !pathsToRemove.contains(path2)){
+                    for(Line line : path2.fLines) {
+                        path1.add(line);
+                    }
+                    pathsToRemove.add(path2);
+                }
+            }
+        }
+
+        for(Path path : pathsToRemove){
+            fFillPaths.remove(path);
+        }
+    }
 	
 	// get a stroke style
 	public StrokeStyle getStrokeStyle(int index) {
@@ -122,7 +143,9 @@ public class ShapeInstance extends Instance {
 			path.render(renderer);
 			
 			// depending on whether we're in mask mode or not, we fill or clip
-			if (!isMask()) getFillStyle(path.getIndex()).getPaint().render(renderer);
+			if (!isMask()) {
+                getFillStyle(path.getIndex()).getPaint().render(renderer);
+            }
 			else renderer.clip();
 		}
 		
