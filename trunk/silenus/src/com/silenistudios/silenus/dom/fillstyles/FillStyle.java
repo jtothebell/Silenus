@@ -43,7 +43,7 @@ public class FillStyle {
 			fPaint = new LinearGradient(XMLUtility, node);
 		}
 
-        // this is a linear gradient
+        // this is a radial gradient
         else if (node.getNodeName().equals("RadialGradient")) {
             fPaint = new RadialGradient(XMLUtility, node);
         }
