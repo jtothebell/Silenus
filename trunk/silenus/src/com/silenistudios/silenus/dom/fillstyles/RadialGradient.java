@@ -37,13 +37,6 @@ public class RadialGradient implements Paint {
         Node matrixNode = XMLUtility.findNode(root,  "Matrix");
         TransformationMatrix m = new TransformationMatrix(XMLUtility, matrixNode);
 
-        // compute start- and endpoints of the gradient
-        // TODO is there a better way?
-        //fStartX = m.computeX(-1000, 0);
-        //fStartY = m.computeY(-1000, 0);
-        //fStopX = m.computeX(1000, 0);
-        //fStopY = m.computeY(1000, 0);
-
         fCenterX = m.getTranslateX();
         fCenterY = m.getTranslateY();
 
