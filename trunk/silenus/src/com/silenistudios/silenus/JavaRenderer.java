@@ -1,12 +1,6 @@
 package com.silenistudios.silenus;
 
-import java.awt.BasicStroke;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Composite;
-import java.awt.LinearGradientPaint;
-import java.awt.Paint;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
@@ -23,9 +17,6 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import com.silenistudios.silenus.RenderInterface;
-import com.silenistudios.silenus.SceneRenderer;
-import com.silenistudios.silenus.XFLDocument;
 import com.silenistudios.silenus.dom.Bitmap;
 import com.silenistudios.silenus.dom.BitmapInstance;
 import com.silenistudios.silenus.dom.ShapeInstance;
@@ -92,6 +83,7 @@ public class JavaRenderer extends JPanel implements RenderInterface, ShapeRender
 				img = ImageIO.read(new File(bitmap.getAbsolutePath()));
 				fImages.put(bitmap.getAbsolutePath(), img);
 			} catch (IOException e) {
+                e.printStackTrace();
 			}
 		}
 
@@ -249,8 +241,25 @@ public class JavaRenderer extends JPanel implements RenderInterface, ShapeRender
 		fPath = null;
 	}
 
+    @Override
+    public void fillRadialGradient(double centerX, double centerY, double radius, Vector<ColorStop> colorStops) {
+        float[] fractions = new float[colorStops.size()];
+        java.awt.Color[] colors = new java.awt.Color[colorStops.size()];
+        for (int i = 0; i < colorStops.size(); ++i) {
+            fractions[i] = (float)colorStops.get(i).getRatio();
+            Color color = colorStops.get(i).getColor();
+            colors[i] = new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(color.getAlpha() * 255));
+        }
 
-	@Override
+        Paint paint = new RadialGradientPaint((float)centerX, (float)centerY, (float)radius, fractions, colors);
+        fSurface.setPaint(paint);
+        fPath.closePath();
+        fSurface.fill(fPath);
+        fPath = null;
+    }
+
+
+    @Override
 	public void stroke(StrokeStyle strokeStyle) {
 		Color color = strokeStyle.getColor();
 		Paint paint = new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(color.getAlpha() * 255));

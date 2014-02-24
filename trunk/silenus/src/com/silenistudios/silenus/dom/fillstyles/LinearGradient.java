@@ -41,10 +41,10 @@ public class LinearGradient implements Paint {
 		
 		// compute start- and endpoints of the gradient
 		// TODO is there a better way?
-		fStartX = m.computeX(-1000, 0);
-		fStartY = m.computeY(-1000, 0);
-		fStopX = m.computeX(1000, 0);
-		fStopY = m.computeY(1000, 0);
+		fStartX = m.computeX(-819.2, 819.2);
+		fStartY = m.computeY(-819.2, 819.2);
+		fStopX = m.computeX(819.2, 819.2);
+		fStopY = m.computeY(819.2, 819.2);
 		
 		
 		// get the gradient entries

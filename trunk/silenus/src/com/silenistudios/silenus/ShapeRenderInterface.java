@@ -29,6 +29,9 @@ public interface ShapeRenderInterface {
 	
 	// fill the path with a linear gradient
 	public void fillLinearGradient(double startX, double startY, double stopX, double stopY, Vector<ColorStop> colorStops);
+
+    // fill the path with a linear gradient
+    public void fillRadialGradient(double centerX, double centerY, double radius, Vector<ColorStop> colorStops);
 	
 	// stroke the path with the given stroke style
 	public void stroke(StrokeStyle strokeStyle);

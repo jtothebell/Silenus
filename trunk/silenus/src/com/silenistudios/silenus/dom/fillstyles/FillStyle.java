@@ -37,11 +37,16 @@ public class FillStyle {
 			color.setAlpha(XMLUtility.getDoubleAttribute(node, "alpha", 1.0));
 			fPaint = color;
 		}
-		
+
 		// this is a linear gradient
 		else if (node.getNodeName().equals("LinearGradient")) {
 			fPaint = new LinearGradient(XMLUtility, node);
 		}
+
+        // this is a linear gradient
+        else if (node.getNodeName().equals("RadialGradient")) {
+            fPaint = new RadialGradient(XMLUtility, node);
+        }
 		
 		// unsupported fill style
 		else {
