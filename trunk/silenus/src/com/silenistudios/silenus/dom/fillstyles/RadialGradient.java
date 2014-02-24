@@ -10,12 +10,12 @@ import com.silenistudios.silenus.xml.XMLUtility;
 
 
 /**
- * Now this is probably the most curious thing I've encountered so far in the XFL format, and there are quite a few
- * things that make no sense at all. In the XML format, a linear gradient is represented by a transformation matrix,
- * from which somehow the begin- and endpoints of the gradient must be derived.
- * After some puzzling and empirical estimation, I found that after transforming [-1000,0] and [1000,0],
- * you get something close to the begin- and endpoints of the gradient. Don't ask me why.
- * @author Karel
+ * "All gradients are defined in a standard space called the gradient square. The gradient square is centered at (0, 0),
+ * and extends from (-16384, -16384) to (16384, 16384)." (page 144)
+ *
+ * 16384 twips = 819.2 points
+ * (http://github.com/musictheory/swiffcore had the answer)
+ * @author Jon Bell
  *
  */
 public class RadialGradient implements Paint {

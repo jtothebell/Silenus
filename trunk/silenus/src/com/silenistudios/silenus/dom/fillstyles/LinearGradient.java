@@ -17,6 +17,12 @@ import com.silenistudios.silenus.xml.XMLUtility;
  * you get something close to the begin- and endpoints of the gradient. Don't ask me why.
  * @author Karel
  *
+ *
+ * "All gradients are defined in a standard space called the gradient square. The gradient square is centered at (0, 0),
+ * and extends from (-16384, -16384) to (16384, 16384)." (page 144)
+ *
+ * 16384 twis = 819.2 points
+ *  (http://github.com/musictheory/swiffcore had the answer)
  */
 public class LinearGradient implements Paint {
 	
