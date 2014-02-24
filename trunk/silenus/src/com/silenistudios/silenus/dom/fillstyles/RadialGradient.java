@@ -40,7 +40,21 @@ public class RadialGradient implements Paint {
         fCenterX = m.getTranslateX();
         fCenterY = m.getTranslateY();
 
-        fRadius =  819.2 * m.getMatrix()[0][0]; //a
+        double radius1 =  819.2 * m.getMatrix()[0][0]; //a
+        double radius2 = 819.2 * m.getMatrix()[1][1]; //d
+
+        if (radius1 == radius2) //circle
+        {
+            fRadius = radius1;
+        }
+        else //oval
+        {
+            //this is a stab in the dark at a filthy hack
+            //I think 'a' and 'c' in the transform are modifiers for the radius of the ellipse
+            //can't find any documentation on this, and for the flas I'm working with this
+            //looks acceptable
+            fRadius = 819.2 * m.getMatrix()[1][0]; //c
+        }
 
 
         // get the gradient entries
