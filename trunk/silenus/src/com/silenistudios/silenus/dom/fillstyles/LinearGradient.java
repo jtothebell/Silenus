@@ -46,7 +46,6 @@ public class LinearGradient implements Paint {
 		TransformationMatrix m = new TransformationMatrix(XMLUtility, matrixNode);
 		
 		// compute start- and endpoints of the gradient
-		// TODO is there a better way?
 		fStartX = m.computeX(-819.2, 819.2);
 		fStartY = m.computeY(-819.2, 819.2);
 		fStopX = m.computeX(819.2, 819.2);
